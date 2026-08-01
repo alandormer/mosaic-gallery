@@ -1,35 +1,1138 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mosaic Site</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mosaic Gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    :root { color-scheme: light; }
-    body { margin: 0; font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; background: #f7f7f5; color: #1f1f1d; }
-    main { max-width: 840px; margin: 3rem auto; padding: 0 1.25rem; }
-    h1 { margin: 0 0 0.75rem; font-size: 1.8rem; }
-    p { margin: 0 0 1.25rem; line-height: 1.45; }
-    ul { margin: 0; padding-left: 1.25rem; }
-    li { margin: 0.4rem 0; }
-    a { color: #0f5a7a; text-decoration: none; }
-    a:hover, a:focus { text-decoration: underline; }
-    .meta { color: #66625f; font-size: 0.95rem; }
+    /* =========================================================================
+       DESIGN TOKENS  (mirrored from styles.css so gallery is self-contained)
+    ========================================================================= */
+    :root {
+      color-scheme: dark;
+      --bg-a:          #1c2028;
+      --bg-b:          #12151b;
+      --panel:         rgba(27, 31, 38, 0.9);
+      --panel-strong:  rgba(32, 37, 46, 0.96);
+      --card-bg:       rgba(28, 32, 39, 0.86);
+      --card-hover:    rgba(36, 42, 51, 0.95);
+      --text:          #e8edf4;
+      --muted:         #a7b2c2;
+      --subtle:        #778295;
+      --accent:        #83aef1;
+      --accent-dim:    rgba(131, 174, 241, 0.18);
+      --accent-blue:   #8bb8ec;
+      --border:        rgba(255, 255, 255, 0.08);
+      --border-hover:  rgba(255, 255, 255, 0.15);
+      --shadow-sm:     0 2px 8px rgba(0, 0, 0, 0.28);
+      --shadow-md:     0 8px 28px rgba(0, 0, 0, 0.38);
+      --shadow-lg:     0 20px 56px rgba(0, 0, 0, 0.52);
+      --radius-card:   16px;
+      --radius-btn:    10px;
+      --radius-thumb:  12px;
+    }
+
+    /* =========================================================================
+       RESET & BASE
+    ========================================================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { height: 100%; }
+
+    body {
+      min-height: 100%;
+      font-family: "Inter", "SF Pro Text", "Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: var(--bg-b);
+      background-image:
+        radial-gradient(ellipse 1400px 600px at 50% -80px, var(--bg-a), transparent),
+        radial-gradient(ellipse 800px 400px at 80% 100%, rgba(43, 38, 33, 0.6), transparent);
+      background-attachment: fixed;
+    }
+
+    /* =========================================================================
+       LAYOUT SHELL
+    ========================================================================= */
+    .gallery-shell {
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+
+    /* =========================================================================
+       HEADER
+    ========================================================================= */
+    .gallery-header {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding: 48px 0 32px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+    }
+
+    .header-identity { display: flex; align-items: center; }
+
+    .gallery-title {
+      font-size: clamp(1.5rem, 2.4vw, 2rem);
+      font-weight: 650;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      line-height: 1.1;
+    }
+
+    .header-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .search-wrapper {
+      position: relative;
+      flex: 1;
+      min-width: 220px;
+      max-width: 440px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--subtle);
+      pointer-events: none;
+      font-size: 15px;
+      line-height: 1;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border-radius: var(--radius-btn);
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    }
+
+    .search-input::placeholder { color: var(--subtle); }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      background: rgba(232, 164, 90, 0.06);
+      box-shadow: 0 0 0 3px rgba(232, 164, 90, 0.12);
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .sort-select,
+    .collection-select {
+      padding: 9px 32px 9px 13px;
+      border-radius: var(--radius-btn);
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23b7aea3' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      transition: border-color 0.15s, background-color 0.15s;
+    }
+
+    .sort-select:hover,
+    .collection-select:hover { border-color: var(--border-hover); }
+    .sort-select:focus,
+    .collection-select:focus { border-color: var(--accent); }
+    .sort-select option,
+    .collection-select option { background: #1e1b17; }
+
+    .icon-btn {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-btn);
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.12s, color 0.12s, border-color 0.12s;
+      user-select: none;
+    }
+
+    .icon-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+      border-color: var(--border-hover);
+    }
+
+    .icon-btn:active {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .icon-btn.spinning { animation: spin 0.6s linear; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Count badge */
+    .count-badge {
+      padding: 5px 10px;
+      border-radius: 20px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(232, 164, 90, 0.25);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+
+    /* =========================================================================
+       STATUS / LOADING
+    ========================================================================= */
+    .gallery-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 0 20px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      min-height: 44px;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    /* =========================================================================
+       GRID
+    ========================================================================= */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 18px;
+      align-content: start;
+    }
+
+    /* =========================================================================
+       CARD
+    ========================================================================= */
+    .mosaic-card {
+      display: flex;
+      flex-direction: column;
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.22s cubic-bezier(0.34, 1.36, 0.64, 1),
+                  box-shadow 0.22s ease,
+                  border-color 0.18s ease,
+                  background 0.18s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .mosaic-card:hover {
+      transform: translateY(-4px) scale(1.005);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--border-hover);
+      background: var(--card-hover);
+    }
+
+    .mosaic-card:active {
+      transform: translateY(-2px) scale(1.002);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Thumbnail */
+    .card-thumb {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: linear-gradient(145deg, rgba(40, 35, 28, 0.8), rgba(20, 18, 14, 0.9));
+      overflow: hidden;
+      flex-shrink: 0;
+      perspective: 1000px;
+    }
+
+    .card-thumb-flip {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 320ms ease;
+    }
+
+    .card-thumb.flipped .card-thumb-flip {
+      transform: rotateY(180deg);
+    }
+
+    .card-thumb-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .card-thumb-face.back {
+      transform: rotateY(180deg);
+      background: rgba(14, 12, 10, 0.58);
+    }
+
+    .card-thumb-face img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      opacity: 0;
+    }
+
+    .card-thumb-face img.loaded { opacity: 1; }
+
+    .mosaic-card:hover .card-thumb-face img {
+      transform: scale(1.04);
+    }
+
+    .thumb-placeholder {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: var(--subtle);
+      font-size: 2.5rem;
+      transition: opacity 0.3s;
+    }
+
+    .thumb-placeholder.hidden { opacity: 0; pointer-events: none; }
+
+    .thumb-flip-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(14, 12, 10, 0.72);
+      backdrop-filter: blur(4px);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      z-index: 2;
+      transition: background 0.16s ease, border-color 0.16s ease, opacity 0.16s ease;
+    }
+
+    .thumb-flip-btn:hover {
+      background: rgba(22, 20, 17, 0.86);
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .thumb-flip-btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    /* Resolution badge on thumbnail */
+    .thumb-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(14, 12, 10, 0.72);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+    }
+
+    /* Body */
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px 14px 16px;
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+      margin-bottom: 2px;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.3;
+    }
+
+    .meta-item .val {
+      font-variant-numeric: tabular-nums;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .card-actions {
+      margin-top: 8px;
+      display: flex;
+      gap: 6px;
+      opacity: 0;
+      transition: opacity 0.16s ease;
+      pointer-events: none;
+    }
+
+    .mosaic-card:hover .card-actions {
+      opacity: 1;
+    }
+
+    .card-action-pill {
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 0.66rem;
+      color: var(--subtle);
+      background: rgba(255, 255, 255, 0.03);
+      user-select: none;
+    }
+
+    /* Footer */
+    .card-footer {
+      padding: 10px 16px 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .open-btn {
+      display: block;
+      width: 100%;
+      padding: 9px;
+      border-radius: var(--radius-btn);
+      border: 1px solid rgba(232, 164, 90, 0.3);
+      background: rgba(232, 164, 90, 0.1);
+      color: var(--accent);
+      font-family: inherit;
+      font-size: 0.83rem;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      letter-spacing: 0.01em;
+      transition: background 0.14s, border-color 0.14s, color 0.14s, box-shadow 0.14s;
+      text-decoration: none;
+    }
+
+    .open-btn:hover {
+      background: rgba(232, 164, 90, 0.2);
+      border-color: rgba(232, 164, 90, 0.55);
+      color: #f2bc76;
+      box-shadow: 0 0 12px rgba(232, 164, 90, 0.18);
+    }
+
+    .open-btn:active {
+      background: rgba(232, 164, 90, 0.28);
+    }
+
+    /* =========================================================================
+       EMPTY STATE
+    ========================================================================= */
+    .empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 80px 24px;
+      text-align: center;
+    }
+
+    .empty-state.visible { display: flex; }
+
+    .empty-illustration {
+      font-size: 5rem;
+      line-height: 1;
+      opacity: 0.45;
+      filter: grayscale(0.3);
+    }
+
+    .empty-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .empty-body {
+      font-size: 0.9rem;
+      color: var(--muted);
+      max-width: 360px;
+      line-height: 1.6;
+    }
+
+    .empty-hint {
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--subtle);
+      font-size: 0.8rem;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      letter-spacing: 0.01em;
+    }
+
+    /* =========================================================================
+       ERROR STATE
+    ========================================================================= */
+    .error-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 60px 24px;
+      text-align: center;
+    }
+
+    .error-state.visible { display: flex; }
+
+    .error-icon { font-size: 3rem; opacity: 0.6; }
+
+    .error-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .error-body {
+      font-size: 0.85rem;
+      color: var(--muted);
+      max-width: 480px;
+      line-height: 1.6;
+    }
+
+    .error-detail {
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: rgba(220, 70, 70, 0.08);
+      border: 1px solid rgba(220, 70, 70, 0.2);
+      color: #e07070;
+      font-size: 0.78rem;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      max-width: 480px;
+      word-break: break-word;
+    }
+
+    /* =========================================================================
+       NO RESULTS (search / filter)
+    ========================================================================= */
+    .no-results {
+      display: none;
+      grid-column: 1 / -1;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 60px 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .no-results.visible { display: flex; }
+    .no-results-icon { font-size: 2.5rem; opacity: 0.5; }
+    .no-results-text { font-size: 0.95rem; }
+
+    /* =========================================================================
+       RESPONSIVE
+    ========================================================================= */
+    @media (min-width: 1400px) {
+      .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+    }
+
+    @media (max-width: 900px) {
+      .gallery-shell { padding: 0 16px 48px; }
+      .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+      .gallery-header { padding: 32px 0 24px; }
+    }
+
+    @media (max-width: 600px) {
+      .gallery-shell { padding: 0 12px 40px; }
+      .gallery-grid { grid-template-columns: 1fr; gap: 12px; }
+      .gallery-header { gap: 18px; }
+      .header-toolbar { flex-direction: column; align-items: stretch; }
+      .search-wrapper { max-width: 100%; }
+      .toolbar-right { margin-left: 0; width: 100%; justify-content: space-between; }
+      .gallery-title { font-size: 1.5rem; }
+    }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Published Mosaics</h1>
-    <p>Lightweight Mosaic Only pages prepared for static hosting.</p>
-    <ul>
-      <li><a href="./20260731-120236-mosaic/">20260731-120236-mosaic</a> <span class="meta">(mosaic.jpg)</span></li>
-      <li><a href="./20260731-154129-mosaic/">20260731-154129-mosaic</a> <span class="meta">(mosaic.jpg)</span></li>
-      <li><a href="./imgi-11-default-mosaic/">imgi-11-default-mosaic</a> <span class="meta">(mosaic.jpg)</span></li>
-      <li><a href="./imgi-40-default-mosaic/">imgi-40-default-mosaic</a> <span class="meta">(mosaic.jpg)</span></li>
-      <li><a href="./imgi-54-default-mosaic/">imgi-54-default-mosaic</a> <span class="meta">(mosaic.jpg)</span></li>
-      <li><a href="./lighthouse/">lighthouse</a> <span class="meta">(mosaic.jpg)</span></li>
-      <li><a href="./live-flow-check/">live-flow-check</a> <span class="meta">(mosaic.jpg)</span></li>
-    </ul>
+
+<div class="gallery-shell">
+
+  <!-- HEADER -->
+  <header class="gallery-header">
+    <div class="header-identity">
+      <h1 class="gallery-title">Mosaics</h1>
+    </div>
+
+    <div class="header-toolbar">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input
+          class="search-input"
+          id="searchInput"
+          type="search"
+          placeholder="Search mosaics…"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+
+      <div class="toolbar-right">
+        <span class="count-badge" id="countBadge" style="display:none"></span>
+
+        <a id="generateLink" class="icon-btn" href="generate.html" title="Open generation workflow" aria-label="Open generation workflow">＋</a>
+
+        <select class="collection-select" id="collectionSelect" title="Collection" aria-label="Collection filter">
+          <option value="__all__">All collections</option>
+        </select>
+
+        <select class="sort-select" id="sortSelect" title="Sort order" aria-label="Sort order">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="az">A → Z</option>
+          <option value="za">Z → A</option>
+        </select>
+
+        <button class="icon-btn" id="refreshBtn" title="Refresh gallery" aria-label="Refresh gallery">↺</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- STATUS -->
+  <div class="gallery-status" id="galleryStatus">
+    <div class="spinner" id="loadingSpinner"></div>
+    <span id="statusText">Loading gallery manifest…</span>
+  </div>
+
+  <!-- GRID -->
+  <main class="gallery-grid" id="galleryGrid">
+    <div class="no-results" id="noResults">
+      <div class="no-results-icon">🔍</div>
+      <div class="no-results-text">No mosaics match your search.</div>
+    </div>
   </main>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state" id="emptyState">
+    <div class="empty-illustration">🖼️</div>
+    <h2 class="empty-title">No mosaics have been generated yet.</h2>
+    <p class="empty-body" id="emptyBody">
+      Run the mosaic builder to create your first mosaic. Generated files will appear here automatically.
+    </p>
+    <code class="empty-hint" id="emptyHint">python -m mosaic --images-dir images --target-dir target --output-dir output</code>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div class="error-state" id="errorState">
+    <div class="error-icon">⚠️</div>
+    <h2 class="error-title">Could not load the gallery manifest.</h2>
+    <p class="error-body">
+      Make sure the gallery data endpoint is available and that the published gallery includes a generated index.
+    </p>
+    <div class="error-detail" id="errorDetail"></div>
+  </div>
+
+</div><!-- /.gallery-shell -->
+
+<script>
+  // ==========================================================================
+  // CONFIGURATION
+  // ==========================================================================
+
+  const params  = new URL(window.location.href).searchParams;
+
+  function resolveGallerySourceUrl() {
+    const explicit = params.get('gallery');
+    if (explicit) {
+      return new URL(explicit, window.location.href);
+    }
+
+    const pathname = window.location.pathname.toLowerCase();
+    if (pathname.includes('/viewer/')) {
+      return new URL('/api/gallery-index', window.location.href);
+    }
+
+    return new URL('gallery.json', window.location.href);
+  }
+
+  const GALLERY_SOURCE = resolveGallerySourceUrl();
+
+  // ==========================================================================
+  // STATE
+  // ==========================================================================
+
+  let allMosaics  = [];   // full list after load
+  let displayList = [];   // after sort + filter
+  let galleryMode = 'local';
+
+  // ==========================================================================
+  // DOM REFS
+  // ==========================================================================
+
+  const dom = {
+    grid:          document.getElementById('galleryGrid'),
+    emptyState:    document.getElementById('emptyState'),
+    errorState:    document.getElementById('errorState'),
+    errorDetail:   document.getElementById('errorDetail'),
+    noResults:     document.getElementById('noResults'),
+    status:        document.getElementById('galleryStatus'),
+    statusText:    document.getElementById('statusText'),
+    spinner:       document.getElementById('loadingSpinner'),
+    search:        document.getElementById('searchInput'),
+    collection:    document.getElementById('collectionSelect'),
+    sort:          document.getElementById('sortSelect'),
+    refresh:       document.getElementById('refreshBtn'),
+    countBadge:    document.getElementById('countBadge'),
+    generateLink:  document.getElementById('generateLink'),
+    emptyBody:     document.getElementById('emptyBody'),
+    emptyHint:     document.getElementById('emptyHint'),
+  };
+
+  // ==========================================================================
+  // STARTUP
+  // ==========================================================================
+
+  init();
+
+  dom.search.addEventListener('input', onFilter);
+  dom.collection.addEventListener('change', onFilter);
+  dom.sort.addEventListener('change', onFilter);
+  dom.refresh.addEventListener('click', () => {
+    if (galleryMode === 'published') return;
+    dom.refresh.classList.add('spinning');
+    setTimeout(() => dom.refresh.classList.remove('spinning'), 650);
+    init();
+  });
+
+  // ==========================================================================
+  // MAIN INIT
+  // ==========================================================================
+
+  async function init() {
+    clearGrid();
+    showStatus(true, 'Loading gallery manifest…');
+    hideAll();
+
+    try {
+      const galleryManifest = await loadGalleryManifest();
+      galleryMode = galleryManifest && galleryManifest.mode === 'published' ? 'published' : 'local';
+      applyGalleryModeUi(galleryManifest);
+      allMosaics = Array.isArray(galleryManifest.items)
+        ? galleryManifest.items.map(normalizeGalleryItem).filter(Boolean)
+        : [];
+      populateCollectionFilter(allMosaics);
+      onFilter();
+
+      if (allMosaics.length === 0) {
+        showStatus(false, '');
+        showEmptyState();
+      } else {
+        showStatus(false, '');
+      }
+
+    } catch (err) {
+      showStatus(false, '');
+      showError(String(err.message || err));
+    }
+  }
+
+  async function loadGalleryManifest() {
+    const response = await fetch(GALLERY_SOURCE.href);
+    if (!response.ok) {
+      throw new Error(`Failed to load gallery manifest (${response.status}): ${GALLERY_SOURCE.href}`);
+    }
+    return response.json();
+  }
+
+  function normalizeGalleryItem(item) {
+    if (!item || typeof item !== 'object') return null;
+
+    const columns = Number(item.columns) || 0;
+    const rows = Number(item.rows) || 0;
+    const tileCount = Number(item.tile_count) || (columns > 0 && rows > 0 ? columns * rows : 0);
+    const sourceCount = Number(item.source_count) || 0;
+    const width = Number(item.width) || 0;
+    const height = Number(item.height) || 0;
+
+    return {
+      slug: String(item.slug || item.title || 'mosaic'),
+      stem: String(item.title || item.slug || 'mosaic'),
+      viewerUrl: String(item.viewer_url || '#'),
+      thumbnailUrl: String(item.thumbnail_url || item.image_url || ''),
+      imageUrl: String(item.image_url || ''),
+      targetUrl: item.target_url ? String(item.target_url) : null,
+      collections: Array.isArray(item.collections) ? item.collections.filter(Boolean) : [],
+      date: item.date ? new Date(item.date) : null,
+      width,
+      height,
+      columns,
+      rows,
+      tileCount,
+      sourceCount,
+      mode: String(item.mode || galleryMode || 'local'),
+    };
+  }
+
+  function applyGalleryModeUi(mode) {
+    const published = mode === 'published';
+
+    if (dom.generateLink) {
+      dom.generateLink.style.display = published ? 'none' : '';
+    }
+
+    if (dom.refresh) {
+      dom.refresh.style.display = published ? 'none' : '';
+    }
+
+    if (dom.emptyBody) {
+      dom.emptyBody.textContent = published
+        ? 'No mosaics have been published yet.'
+        : 'Run the mosaic builder to create your first mosaic. Generated files will appear here automatically.';
+    }
+
+    if (dom.emptyHint) {
+      dom.emptyHint.textContent = published
+        ? 'Publish a mosaic from the development workspace to populate this gallery.'
+        : 'python -m mosaic --images-dir images --target-dir target --output-dir output';
+    }
+  }
+
+  // ==========================================================================
+  // FILTER + SORT
+  // ==========================================================================
+
+  function onFilter() {
+    const query   = dom.search.value.trim().toLowerCase();
+    const selectedCollection = dom.collection.value;
+    const sortKey = dom.sort.value;
+
+    let list = allMosaics.filter(m =>
+      !query || m.stem.toLowerCase().includes(query)
+    );
+
+    if (selectedCollection !== '__all__') {
+      list = list.filter(m => (m.collections || []).includes(selectedCollection));
+    }
+
+    list = sortList(list, sortKey);
+    displayList = list;
+
+    renderGrid(list);
+    updateBadge(list.length, allMosaics.length);
+  }
+
+  function sortList(list, key) {
+    const copy = [...list];
+    switch (key) {
+      case 'newest':
+        return copy.sort((a, b) => {
+          if (!a.date && !b.date) return a.stem.localeCompare(b.stem);
+          if (!a.date) return 1;
+          if (!b.date) return -1;
+          return b.date - a.date;
+        });
+      case 'oldest':
+        return copy.sort((a, b) => {
+          if (!a.date && !b.date) return a.stem.localeCompare(b.stem);
+          if (!a.date) return 1;
+          if (!b.date) return -1;
+          return a.date - b.date;
+        });
+      case 'az':  return copy.sort((a, b) => a.stem.localeCompare(b.stem));
+      case 'za':  return copy.sort((a, b) => b.stem.localeCompare(a.stem));
+      default:    return copy;
+    }
+  }
+
+  function populateCollectionFilter(mosaics) {
+    const seen = new Set();
+    for (const mosaic of mosaics) {
+      for (const name of mosaic.collections || []) {
+        if (name) seen.add(name);
+      }
+    }
+
+    const existingValue = dom.collection.value || '__all__';
+    dom.collection.innerHTML = '';
+
+    const allOpt = document.createElement('option');
+    allOpt.value = '__all__';
+    allOpt.textContent = 'All collections';
+    dom.collection.appendChild(allOpt);
+
+    const options = Array.from(seen).sort((a, b) => a.localeCompare(b));
+    for (const name of options) {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      dom.collection.appendChild(opt);
+    }
+
+    dom.collection.value = options.includes(existingValue) || existingValue === '__all__'
+      ? existingValue
+      : '__all__';
+  }
+
+  // ==========================================================================
+  // RENDERING
+  // ==========================================================================
+
+  function renderGrid(list) {
+    // Remove existing cards (keep noResults sentinel)
+    const cards = dom.grid.querySelectorAll('.mosaic-card');
+    cards.forEach(c => c.remove());
+
+    dom.noResults.classList.toggle('visible', list.length === 0 && allMosaics.length > 0);
+
+    for (const mosaic of list) {
+      dom.grid.appendChild(buildCard(mosaic));
+    }
+  }
+
+  function buildCard(mosaic) {
+    const viewerUrl = mosaic.viewerUrl || '#';
+
+    const card = document.createElement('a');
+    card.className = 'mosaic-card';
+    card.href = viewerUrl;
+    card.title = `Open ${mosaic.stem} in viewer`;
+
+    // Thumbnail
+    const thumb = document.createElement('div');
+    thumb.className = 'card-thumb';
+
+    const flipInner = document.createElement('div');
+    flipInner.className = 'card-thumb-flip';
+
+    const frontFace = document.createElement('div');
+    frontFace.className = 'card-thumb-face front';
+
+    const backFace = document.createElement('div');
+    backFace.className = 'card-thumb-face back';
+
+    flipInner.appendChild(frontFace);
+    flipInner.appendChild(backFace);
+    thumb.appendChild(flipInner);
+
+    const placeholder = document.createElement('div');
+    placeholder.className = 'thumb-placeholder';
+    placeholder.textContent = '🖼️';
+    frontFace.appendChild(placeholder);
+
+    const img = document.createElement('img');
+    img.alt = mosaic.stem;
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.onload  = () => { img.classList.add('loaded'); placeholder.classList.add('hidden'); };
+    img.onerror = () => { /* keep placeholder */ };
+    img.src = mosaic.thumbnailUrl || mosaic.imageUrl;
+    frontFace.appendChild(img);
+
+    const targetPlaceholder = document.createElement('div');
+    targetPlaceholder.className = 'thumb-placeholder';
+    targetPlaceholder.textContent = '🖼️';
+    backFace.appendChild(targetPlaceholder);
+
+    const targetImg = document.createElement('img');
+    targetImg.alt = `${mosaic.stem} original`;
+    targetImg.loading = 'lazy';
+    targetImg.decoding = 'async';
+    targetImg.onload = () => {
+      targetImg.classList.add('loaded');
+      targetPlaceholder.classList.add('hidden');
+    };
+    if (mosaic.targetUrl) {
+      targetImg.src = mosaic.targetUrl;
+    }
+    backFace.appendChild(targetImg);
+
+    const flipBtn = document.createElement('button');
+    flipBtn.type = 'button';
+    flipBtn.className = 'thumb-flip-btn';
+    flipBtn.textContent = '↺';
+    flipBtn.title = mosaic.targetUrl ? 'Flip to original image' : 'Original image unavailable';
+    if (!mosaic.targetUrl) {
+      flipBtn.disabled = true;
+    }
+    flipBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (flipBtn.disabled) return;
+      thumb.classList.toggle('flipped');
+    });
+    thumb.appendChild(flipBtn);
+
+    const badge = document.createElement('div');
+    badge.className = 'thumb-badge';
+    badge.textContent = `${formatNumber(mosaic.width)} × ${formatNumber(mosaic.height)}`;
+    thumb.appendChild(badge);
+
+    card.appendChild(thumb);
+
+    // Body
+    const body = document.createElement('div');
+    body.className = 'card-body';
+
+    const title = document.createElement('div');
+    title.className = 'card-title';
+    title.textContent = mosaic.stem;
+    body.appendChild(title);
+
+    const meta = document.createElement('div');
+    meta.className = 'card-meta';
+
+    if (mosaic.date) {
+      meta.appendChild(metaItem(formatDateWithOptionalTime(mosaic.date, mosaic.stem)));
+    }
+
+    if (mosaic.columns && mosaic.rows) {
+      meta.appendChild(metaItem(`${formatNumber(mosaic.columns)} × ${formatNumber(mosaic.rows)} grid`));
+    }
+    if (mosaic.tileCount) {
+      meta.appendChild(metaItem(`${formatNumber(mosaic.tileCount)} total tiles`));
+    }
+    if (mosaic.sourceCount) {
+      meta.appendChild(metaItem(`${formatNumber(mosaic.sourceCount)} unique source photo${mosaic.sourceCount !== 1 ? 's' : ''}`));
+    }
+
+    body.appendChild(meta);
+
+    card.appendChild(body);
+
+    return card;
+  }
+
+  function metaItem(text) {
+    const row = document.createElement('div');
+    row.className = 'meta-item';
+
+    const val = document.createElement('span');
+    val.className = 'val';
+    val.textContent = text;
+
+    row.appendChild(val);
+    return row;
+  }
+
+  // ==========================================================================
+  // UI HELPERS
+  // ==========================================================================
+
+  function clearGrid() {
+    const cards = dom.grid.querySelectorAll('.mosaic-card');
+    cards.forEach(c => c.remove());
+    dom.noResults.classList.remove('visible');
+  }
+
+  function hideAll() {
+    dom.emptyState.classList.remove('visible');
+    dom.errorState.classList.remove('visible');
+    dom.countBadge.style.display = 'none';
+  }
+
+  function showStatus(loading, text) {
+    dom.spinner.style.display  = loading ? 'block' : 'none';
+    dom.statusText.textContent = text;
+    dom.status.style.display   = (loading || text) ? 'flex' : 'none';
+  }
+
+  function showEmptyState() {
+    dom.emptyState.classList.add('visible');
+  }
+
+  function showError(msg) {
+    dom.errorState.classList.add('visible');
+    dom.errorDetail.textContent = msg;
+  }
+
+  function updateBadge(shown, total) {
+    if (total === 0) { dom.countBadge.style.display = 'none'; return; }
+    dom.countBadge.style.display = '';
+    dom.countBadge.textContent = shown === total
+      ? `${total} mosaic${total !== 1 ? 's' : ''}`
+      : `${shown} of ${total}`;
+  }
+
+  // ==========================================================================
+  // FORMATTING
+  // ==========================================================================
+
+  function formatDateWithOptionalTime(d, stem) {
+    const date = d instanceof Date ? d : new Date(d);
+    const dateText = Number.isFinite(date.getTime())
+      ? date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+      : String(d || '');
+    const timeMatch = String(stem || '').match(/(?:^|_)(\d{2})(\d{2})(\d{2})(?:$|_)/);
+    if (!timeMatch) {
+      return dateText;
+    }
+    const [, hh, mm] = timeMatch;
+    return `${dateText} • ${hh}:${mm}`;
+  }
+
+  function formatNumber(n) {
+    return Number(n).toLocaleString();
+  }
+</script>
+
 </body>
 </html>
