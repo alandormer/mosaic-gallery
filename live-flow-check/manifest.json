@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "title": "imgi_129_1_MAIN-Liverpool-FC-v-Chelsea-FC-Premier-League-mosaic",
+  "title": "20220326_213254-mosaic",
   "dataset_mode": "mosaic-only",
   "image": {
     "file": "mosaic.jpg",
-    "width": 5000,
-    "height": 3344
+    "width": 6500,
+    "height": 4875
   },
   "collections": [],
   "sources": [],
