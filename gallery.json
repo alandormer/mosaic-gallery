@@ -2,7 +2,7 @@
   "version": 1,
   "mode": "published",
   "title": "Mosaic Gallery",
-  "generated_at": "2026-08-01T11:30:37+00:00",
+  "generated_at": "2026-08-01T11:36:03+00:00",
   "items": [
     {
       "slug": "lighthouse",
@@ -61,6 +61,23 @@
       "viewer_url": "imgi-40-default-mosaic/index.html?gallery=../index.html",
       "thumbnail_url": "imgi-40-default-mosaic/mosaic.jpg",
       "image_url": "imgi-40-default-mosaic/mosaic.jpg",
+      "target_url": null,
+      "date": null,
+      "width": 4000,
+      "height": 2675,
+      "columns": 0,
+      "rows": 0,
+      "tile_count": 0,
+      "source_count": 0,
+      "collections": [],
+      "mode": "published"
+    },
+    {
+      "slug": "imgi-129-1-main-liverpool-fc-v-chelsea-fc-premier-league-mosaic",
+      "title": "imgi_129_1_MAIN-Liverpool-FC-v-Chelsea-FC-Premier-League-mosaic",
+      "viewer_url": "imgi-129-1-main-liverpool-fc-v-chelsea-fc-premier-league-mosaic/index.html?gallery=../index.html",
+      "thumbnail_url": "imgi-129-1-main-liverpool-fc-v-chelsea-fc-premier-league-mosaic/thumbnail.jpg",
+      "image_url": "imgi-129-1-main-liverpool-fc-v-chelsea-fc-premier-league-mosaic/mosaic.jpg",
       "target_url": null,
       "date": null,
       "width": 4000,

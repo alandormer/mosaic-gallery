@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "title": "imgi_129_1_MAIN-Liverpool-FC-v-Chelsea-FC-Premier-League-mosaic",
+  "dataset_mode": "mosaic-only",
+  "image": {
+    "file": "mosaic.jpg",
+    "width": 4000,
+    "height": 2675
+  },
+  "collections": [],
+  "sources": [],
+  "tiles": [],
+  "grid": {},
+  "thumbnail": {
+    "file": "thumbnail.jpg"
+  }
+}
