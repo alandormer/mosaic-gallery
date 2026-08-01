@@ -284,6 +284,9 @@ body {
 }
 
 .toolbar-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-width: 34px;
   padding: 6px 10px;
   border-radius: 8px;
@@ -305,6 +308,10 @@ body {
 
 .toolbar-button:active {
   background: rgba(255, 255, 255, 0.15);
+}
+
+.toolbar-link {
+  text-decoration: none;
 }
 
 .toolbar-divider {

@@ -2,6 +2,8 @@ const params = new URLSearchParams(window.location.search);
 const mapUrl = params.get('map') || '../output/mosaic.json';
 const imageOverride = params.get('image');
 const targetOverride = params.get('target');
+const galleryUrl = params.get('gallery') || 'gallery.html';
+const publishedGallery = galleryUrl === '../index.html';
 
 const STARTUP_STAGE_DEFS = [
   { key: 'manifest', label: 'Loading manifest' },
@@ -60,6 +62,7 @@ const state = {
   startupOriginalImage: null,
   datasetMode: 'interactive',
   interactiveDataAvailable: true,
+  devChromeEnabled: !publishedGallery,
 };
 
 // Cache DOM elements (avoid repeated queries)
@@ -72,6 +75,7 @@ const dom = {
   startupLoading: document.getElementById('startupLoading'),
   startupLoadingText: document.getElementById('startupLoadingText'),
   startupOverlayGrid: document.getElementById('startupOverlayGrid'),
+  backToGalleryBtn: document.getElementById('backToGalleryBtn'),
   infoPanel: document.querySelector('.info-panel'),
   viewport: document.getElementById('viewport'),
   mosaicLayer: document.getElementById('mosaicLayer'),
@@ -100,7 +104,9 @@ const dom = {
 async function init() {
   initUi();
   try {
-    initStartupDebug();
+    if (state.devChromeEnabled) {
+      initStartupDebug();
+    }
     showStartupOverlay();
     state.isInteractive = false;
 
@@ -175,6 +181,20 @@ async function init() {
 }
 
 function initUi() {
+  if (dom.backToGalleryBtn) {
+    dom.backToGalleryBtn.href = galleryUrl;
+  }
+
+  if (state.devChromeEnabled) {
+    if (dom.devIndicator) {
+      dom.devIndicator.classList.remove('hidden');
+    }
+    const debugPanel = document.getElementById('startupDebug');
+    if (debugPanel) {
+      debugPanel.classList.remove('hidden');
+    }
+  }
+
   if (dom.devIndicatorClose) {
     dom.devIndicatorClose.addEventListener('click', () => {
       dom.devIndicator.classList.add('hidden');
