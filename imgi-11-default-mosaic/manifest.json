@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "title": "imgi_11_default-mosaic",
+  "dataset_mode": "mosaic-only",
+  "image": {
+    "file": "mosaic.jpg",
+    "width": 4000,
+    "height": 5300
+  },
+  "collections": [],
+  "sources": [],
+  "tiles": [],
+  "grid": {}
+}
