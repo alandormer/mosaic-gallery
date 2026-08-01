@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "title": "20260731_154129-mosaic",
+  "dataset_mode": "mosaic-only",
+  "image": {
+    "file": "mosaic.jpg",
+    "width": 4000,
+    "height": 1850
+  },
+  "collections": [],
+  "sources": [],
+  "tiles": [],
+  "grid": {}
+}
