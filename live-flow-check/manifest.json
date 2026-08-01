@@ -1,14 +1,20 @@
 {
   "version": 1,
-  "title": "lighthouse rainbow-mosaic",
+  "title": "imgi_129_1_MAIN-Liverpool-FC-v-Chelsea-FC-Premier-League-mosaic",
   "dataset_mode": "mosaic-only",
   "image": {
     "file": "mosaic.jpg",
-    "width": 4000,
-    "height": 2633
+    "width": 5000,
+    "height": 3344
   },
   "collections": [],
   "sources": [],
   "tiles": [],
-  "grid": {}
+  "grid": {},
+  "thumbnail": {
+    "file": "thumbnail.jpg"
+  },
+  "target": {
+    "file": "target.jpg"
+  }
 }

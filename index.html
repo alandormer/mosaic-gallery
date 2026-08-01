@@ -775,7 +775,7 @@
     try {
       const galleryManifest = await loadGalleryManifest();
       galleryMode = galleryManifest && galleryManifest.mode === 'published' ? 'published' : 'local';
-      applyGalleryModeUi(galleryManifest);
+      applyGalleryModeUi(galleryMode);
       allMosaics = Array.isArray(galleryManifest.items)
         ? galleryManifest.items.map(normalizeGalleryItem).filter(Boolean)
         : [];

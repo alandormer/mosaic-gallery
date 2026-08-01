@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "title": "20220326_213254-mosaic",
+  "dataset_mode": "mosaic-only",
+  "image": {
+    "file": "mosaic.jpg",
+    "width": 5000,
+    "height": 3750
+  },
+  "collections": [],
+  "sources": [],
+  "tiles": [],
+  "grid": {},
+  "thumbnail": {
+    "file": "thumbnail.jpg"
+  },
+  "target": {
+    "file": "target.jpg"
+  }
+}
