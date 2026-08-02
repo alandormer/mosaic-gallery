@@ -2,7 +2,7 @@
   "version": 1,
   "mode": "published",
   "title": "Mosaic Gallery",
-  "generated_at": "2026-08-02T09:19:32+00:00",
+  "generated_at": "2026-08-02T09:41:47+00:00",
   "items": [
     {
       "slug": "lighthouse",
@@ -14,6 +14,23 @@
       "date": null,
       "width": 4000,
       "height": 2633,
+      "columns": 0,
+      "rows": 0,
+      "tile_count": 0,
+      "source_count": 0,
+      "collections": [],
+      "mode": "published"
+    },
+    {
+      "slug": "increase1",
+      "title": "increase1",
+      "viewer_url": "increase1/index.html?gallery=../index.html",
+      "thumbnail_url": "increase1/thumbnail.jpg",
+      "image_url": "increase1/mosaic.jpg",
+      "target_url": "increase1/target.jpg",
+      "date": null,
+      "width": 6500,
+      "height": 3006,
       "columns": 0,
       "rows": 0,
       "tile_count": 0,
