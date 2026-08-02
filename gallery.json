@@ -2,7 +2,7 @@
   "version": 1,
   "mode": "published",
   "title": "Mosaic Gallery",
-  "generated_at": "2026-08-02T21:25:14+00:00",
+  "generated_at": "2026-08-02T21:27:30+00:00",
   "items": [
     {
       "slug": "lighthouse",
@@ -130,6 +130,23 @@
       "thumbnail_url": "molly100/thumbnail.jpg",
       "image_url": "molly100/mosaic.jpg",
       "target_url": "molly100/target.jpg",
+      "date": null,
+      "width": 6500,
+      "height": 4875,
+      "columns": 0,
+      "rows": 0,
+      "tile_count": 0,
+      "source_count": 0,
+      "collections": [],
+      "mode": "published"
+    },
+    {
+      "slug": "molly0",
+      "title": "Molly0",
+      "viewer_url": "molly0/index.html?gallery=../index.html",
+      "thumbnail_url": "molly0/thumbnail.jpg",
+      "image_url": "molly0/mosaic.jpg",
+      "target_url": "molly0/target.jpg",
       "date": null,
       "width": 6500,
       "height": 4875,
