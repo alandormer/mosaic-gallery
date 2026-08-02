@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "title": "20221212_154610-mosaic",
+  "dataset_mode": "mosaic-only",
+  "image": {
+    "file": "mosaic.jpg",
+    "width": 6500,
+    "height": 8653
+  },
+  "collections": [],
+  "sources": [],
+  "tiles": [],
+  "grid": {},
+  "thumbnail": {
+    "file": "thumbnail.jpg"
+  },
+  "target": {
+    "file": "target.jpg"
+  }
+}
