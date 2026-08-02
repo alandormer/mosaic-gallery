@@ -2,7 +2,7 @@
   "version": 1,
   "mode": "published",
   "title": "Mosaic Gallery",
-  "generated_at": "2026-08-02T21:03:28+00:00",
+  "generated_at": "2026-08-02T21:07:16+00:00",
   "items": [
     {
       "slug": "lighthouse",
@@ -317,6 +317,23 @@
       "thumbnail_url": "100-mosaic/thumbnail.jpg",
       "image_url": "100-mosaic/mosaic.jpg",
       "target_url": "100-mosaic/target.jpg",
+      "date": null,
+      "width": 6500,
+      "height": 8612,
+      "columns": 0,
+      "rows": 0,
+      "tile_count": 0,
+      "source_count": 0,
+      "collections": [],
+      "mode": "published"
+    },
+    {
+      "slug": "0-mosaic",
+      "title": "0-mosaic",
+      "viewer_url": "0-mosaic/index.html?gallery=../index.html",
+      "thumbnail_url": "0-mosaic/thumbnail.jpg",
+      "image_url": "0-mosaic/mosaic.jpg",
+      "target_url": "0-mosaic/target.jpg",
       "date": null,
       "width": 6500,
       "height": 8612,
