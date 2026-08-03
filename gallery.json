@@ -2,7 +2,7 @@
   "version": 1,
   "mode": "published",
   "title": "Mosaic Gallery",
-  "generated_at": "2026-08-03T12:35:29+00:00",
+  "generated_at": "2026-08-03T12:58:58+00:00",
   "items": [
     {
       "slug": "lighthouse",
@@ -201,6 +201,23 @@
       "date": null,
       "width": 6500,
       "height": 6500,
+      "columns": 0,
+      "rows": 0,
+      "tile_count": 0,
+      "source_count": 0,
+      "collections": [],
+      "mode": "published"
+    },
+    {
+      "slug": "billymolly",
+      "title": "Billy&Molly",
+      "viewer_url": "billymolly/index.html?gallery=../index.html",
+      "thumbnail_url": "billymolly/thumbnail.jpg",
+      "image_url": "billymolly/mosaic.jpg",
+      "target_url": "billymolly/target.jpg",
+      "date": null,
+      "width": 6500,
+      "height": 4875,
       "columns": 0,
       "rows": 0,
       "tile_count": 0,
