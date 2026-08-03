@@ -241,6 +241,50 @@
       align-content: start;
     }
 
+    .gallery-pagination {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      padding: 8px 0 2px;
+    }
+
+    .gallery-pagination.visible {
+      display: flex;
+    }
+
+    .page-btn {
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--muted);
+      padding: 7px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    }
+
+    .page-btn:hover:not(:disabled) {
+      border-color: var(--border-hover);
+      background: rgba(255, 255, 255, 0.09);
+      color: var(--text);
+    }
+
+    .page-btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    .page-indicator {
+      min-width: 96px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-variant-numeric: tabular-nums;
+    }
+
     /* =========================================================================
        CARD
     ========================================================================= */
@@ -592,8 +636,8 @@
     /* =========================================================================
        RESPONSIVE
     ========================================================================= */
-    @media (min-width: 1400px) {
-      .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+    @media (min-width: 1200px) {
+      .gallery-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     }
 
     @media (max-width: 900px) {
@@ -671,6 +715,12 @@
     </div>
   </main>
 
+  <nav class="gallery-pagination" id="galleryPagination" aria-label="Gallery pagination">
+    <button type="button" class="page-btn" id="pagePrevBtn">Previous</button>
+    <span class="page-indicator" id="pageIndicator">Page 1 of 1</span>
+    <button type="button" class="page-btn" id="pageNextBtn">Next</button>
+  </nav>
+
   <!-- EMPTY STATE -->
   <div class="empty-state" id="emptyState">
     <div class="empty-illustration">🖼️</div>
@@ -723,6 +773,8 @@
   let allMosaics  = [];   // full list after load
   let displayList = [];   // after sort + filter
   let galleryMode = 'local';
+  let currentPage = 1;
+  const PAGE_SIZE = 12;
 
   // ==========================================================================
   // DOM REFS
@@ -745,6 +797,10 @@
     generateLink:  document.getElementById('generateLink'),
     emptyBody:     document.getElementById('emptyBody'),
     emptyHint:     document.getElementById('emptyHint'),
+    pagination:    document.getElementById('galleryPagination'),
+    pagePrevBtn:   document.getElementById('pagePrevBtn'),
+    pageNextBtn:   document.getElementById('pageNextBtn'),
+    pageIndicator: document.getElementById('pageIndicator'),
   };
 
   // ==========================================================================
@@ -756,6 +812,17 @@
   dom.search.addEventListener('input', onFilter);
   dom.collection.addEventListener('change', onFilter);
   dom.sort.addEventListener('change', onFilter);
+  dom.pagePrevBtn.addEventListener('click', () => {
+    if (currentPage <= 1) return;
+    currentPage -= 1;
+    renderPagedGrid();
+  });
+  dom.pageNextBtn.addEventListener('click', () => {
+    const totalPages = totalPageCount();
+    if (currentPage >= totalPages) return;
+    currentPage += 1;
+    renderPagedGrid();
+  });
   dom.refresh.addEventListener('click', () => {
     if (galleryMode === 'published') return;
     dom.refresh.classList.add('spinning');
@@ -876,8 +943,37 @@
     list = sortList(list, sortKey);
     displayList = list;
 
-    renderGrid(list);
+    currentPage = 1;
+    renderPagedGrid();
     updateBadge(list.length, allMosaics.length);
+  }
+
+  function totalPageCount() {
+    return Math.max(1, Math.ceil(displayList.length / PAGE_SIZE));
+  }
+
+  function pageSlice(list) {
+    const pageCount = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+    if (currentPage > pageCount) {
+      currentPage = pageCount;
+    }
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return list.slice(start, start + PAGE_SIZE);
+  }
+
+  function renderPagedGrid() {
+    const pageCount = totalPageCount();
+    const paged = pageSlice(displayList);
+    renderGrid(paged);
+    updatePagination(pageCount);
+  }
+
+  function updatePagination(pageCount) {
+    const hasPagination = displayList.length > PAGE_SIZE;
+    dom.pagination.classList.toggle('visible', hasPagination);
+    dom.pageIndicator.textContent = `Page ${currentPage} of ${pageCount}`;
+    dom.pagePrevBtn.disabled = currentPage <= 1;
+    dom.pageNextBtn.disabled = currentPage >= pageCount;
   }
 
   function sortList(list, key) {
@@ -1081,6 +1177,7 @@
     const cards = dom.grid.querySelectorAll('.mosaic-card');
     cards.forEach(c => c.remove());
     dom.noResults.classList.remove('visible');
+    dom.pagination.classList.remove('visible');
   }
 
   function hideAll() {
