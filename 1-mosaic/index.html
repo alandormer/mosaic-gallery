@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mosaic Viewer</title>
+    <link rel="stylesheet" href="css/styles.css?v=202608030930" />
+  </head>
+  <body>
+    <div id="devIndicator" class="dev-indicator hidden">
+      <span class="dev-indicator-dot" aria-hidden="true"></span>
+      <span class="dev-indicator-label">Current build</span>
+      <button id="devIndicatorClose" class="dev-indicator-close" type="button" aria-label="Dismiss">×</button>
+    </div>
+
+    <div id="startupDebug" class="startup-debug hidden" aria-live="polite">
+      <div class="startup-debug-header">
+        <span class="startup-debug-title">Startup Debug</span>
+        <button id="startupDebugClose" class="startup-debug-close" type="button" aria-label="Close debug panel">×</button>
+      </div>
+      <div id="startupDebugRows" class="startup-debug-rows"></div>
+    </div>
+
+    <div id="app" class="app-shell">
+      <section class="viewer-panel">
+        <header class="viewer-toolbar">
+          <div class="toolbar-controls">
+            <a id="backToGalleryBtn" class="toolbar-button toolbar-link" href="gallery.html">Back to Gallery</a>
+            <div class="toolbar-divider"></div>
+            <button id="fitBtn" class="toolbar-button" title="Fit entire mosaic">Fit</button>
+            <button id="oneToOneBtn" class="toolbar-button" title="Zoom to 100%">100%</button>
+            <button id="zoomInBtn" class="toolbar-button" title="Zoom in">+</button>
+            <button id="zoomOutBtn" class="toolbar-button" title="Zoom out">−</button>
+            <div class="toolbar-divider"></div>
+            <button id="inspectorToggleBtn" class="toolbar-button" title="Hide inspector" aria-label="Toggle inspector">☰</button>
+            <div class="toolbar-divider"></div>
+            <span id="zoomDisplay" class="zoom-percentage">100%</span>
+          </div>
+        </header>
+        <p id="status" class="status-pill">Loading mosaic…</p>
+
+        <div id="viewport" class="viewport">
+          <div id="mosaicLayer" class="mosaic-layer">
+            <img id="mosaicImage" alt="Rendered mosaic" draggable="false" />
+            <div id="tileHighlight" class="tile-highlight hidden"></div>
+          </div>
+
+          <!-- Startup reveal layer: sits above the mosaic, removed after animation -->
+          <div id="startupReveal" class="startup-reveal" aria-hidden="true">
+            <!-- Original-image tiles: cover mosaic while loading; animate away to reveal -->
+            <div id="startupOverlayGrid" class="startup-overlay-grid hidden" aria-hidden="true"></div>
+            <!-- Loading card: full-backdrop spinner shown during asset loading -->
+            <div id="startupLoading" class="startup-loading" role="status" aria-live="polite">
+              <div class="startup-loading-card">
+                <div class="startup-spinner" aria-hidden="true"></div>
+                <p id="startupLoadingText" class="startup-loading-text">Loading mosaic…</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="info-panel">
+        <div class="preview-frame">
+          <img id="sourcePreview" alt="Source preview" />
+        </div>
+        <div class="meta-rows">
+          <div class="meta-row">
+            <span class="label">File</span>
+            <span id="sourceFilename" class="value">—</span>
+          </div>
+          <div class="meta-row">
+            <span class="label">Date</span>
+            <span id="sourceDate" class="value">—</span>
+          </div>
+          <div class="meta-row">
+            <span class="label">Tile</span>
+            <span id="tilePosition" class="value">—</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div id="overlay" class="overlay hidden">
+      <button id="overlayClose" class="overlay-close" type="button">×</button>
+      <div class="overlay-content">
+        <img id="overlayImage" alt="Full-size source image" />
+        <div id="overlayCaption" class="overlay-caption"></div>
+      </div>
+    </div>
+
+        <script>
+      (() => {
+        const params = new URLSearchParams(window.location.search);
+        if (!params.has('map')) {
+          params.set('map', 'manifest.json');
+        }
+        const query = `?${params.toString()}`;
+        if (window.location.search !== query) {
+          const url = `${window.location.pathname}${query}${window.location.hash}`;
+          window.history.replaceState({}, '', url);
+        }
+      })();
+    </script>
+    <script src="js/app.js?v=202607261500"></script>
+  </body>
+</html>
