@@ -2,7 +2,7 @@
   "version": 1,
   "mode": "published",
   "title": "Mosaic Gallery",
-  "generated_at": "2026-08-03T09:20:40+00:00",
+  "generated_at": "2026-08-03T10:39:30+00:00",
   "items": [
     {
       "slug": "lighthouse",
@@ -167,6 +167,23 @@
       "date": null,
       "width": 6500,
       "height": 4875,
+      "columns": 0,
+      "rows": 0,
+      "tile_count": 0,
+      "source_count": 0,
+      "collections": [],
+      "mode": "published"
+    },
+    {
+      "slug": "molly-cloak",
+      "title": "Molly Cloak",
+      "viewer_url": "molly-cloak/index.html?gallery=../index.html",
+      "thumbnail_url": "molly-cloak/thumbnail.jpg",
+      "image_url": "molly-cloak/mosaic.jpg",
+      "target_url": "molly-cloak/target.jpg",
+      "date": null,
+      "width": 6500,
+      "height": 8667,
       "columns": 0,
       "rows": 0,
       "tile_count": 0,
