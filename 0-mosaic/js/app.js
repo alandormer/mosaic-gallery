@@ -4,6 +4,7 @@ const imageOverride = params.get('image');
 const targetOverride = params.get('target');
 const galleryUrl = params.get('gallery') || 'gallery.html';
 const publishedGallery = galleryUrl === '../index.html';
+const INSPECTOR_STORAGE_KEY = 'mosaic.viewer.inspectorCollapsed';
 
 const STARTUP_STAGE_DEFS = [
   { key: 'manifest', label: 'Loading manifest' },
@@ -58,6 +59,7 @@ const state = {
   previewTimeoutId: null,
   currentPreviewPath: '',
   fitPadding: 22,
+  inspectorCollapsed: false,
   startupDebug: null,
   startupOriginalImage: null,
   datasetMode: 'interactive',
@@ -75,6 +77,7 @@ const dom = {
   startupLoading: document.getElementById('startupLoading'),
   startupLoadingText: document.getElementById('startupLoadingText'),
   startupOverlayGrid: document.getElementById('startupOverlayGrid'),
+  appShell: document.getElementById('app'),
   backToGalleryBtn: document.getElementById('backToGalleryBtn'),
   infoPanel: document.querySelector('.info-panel'),
   viewport: document.getElementById('viewport'),
@@ -95,6 +98,7 @@ const dom = {
   oneToOneBtn: document.getElementById('oneToOneBtn'),
   zoomInBtn: document.getElementById('zoomInBtn'),
   zoomOutBtn: document.getElementById('zoomOutBtn'),
+  inspectorToggleBtn: document.getElementById('inspectorToggleBtn'),
 };
 
 // ============================================================================
@@ -187,6 +191,9 @@ function initUi() {
   // Keep preview hidden until startup selects either target-image-first or fallback placeholder.
   dom.sourcePreview.style.visibility = 'hidden';
 
+  state.inspectorCollapsed = sessionStorage.getItem(INSPECTOR_STORAGE_KEY) === '1';
+  applyInspectorState(false);
+
   if (dom.backToGalleryBtn) {
     dom.backToGalleryBtn.href = galleryUrl;
   }
@@ -210,6 +217,35 @@ function initUi() {
   if (dom.startupDebugClose && debugPanel) {
     dom.startupDebugClose.addEventListener('click', () => {
       debugPanel.classList.add('hidden');
+    });
+  }
+
+  if (dom.inspectorToggleBtn) {
+    dom.inspectorToggleBtn.addEventListener('click', toggleInspector);
+  }
+}
+
+function toggleInspector() {
+  state.inspectorCollapsed = !state.inspectorCollapsed;
+  sessionStorage.setItem(INSPECTOR_STORAGE_KEY, state.inspectorCollapsed ? '1' : '0');
+  applyInspectorState(true);
+}
+
+function applyInspectorState(refit = true) {
+  if (dom.appShell) {
+    dom.appShell.classList.toggle('inspector-collapsed', state.inspectorCollapsed);
+  }
+
+  if (dom.inspectorToggleBtn) {
+    const label = state.inspectorCollapsed ? 'Show inspector' : 'Hide inspector';
+    dom.inspectorToggleBtn.classList.toggle('active', state.inspectorCollapsed);
+    dom.inspectorToggleBtn.title = label;
+    dom.inspectorToggleBtn.setAttribute('aria-label', label);
+  }
+
+  if (refit && state.manifest) {
+    requestAnimationFrame(() => {
+      fitToWindow(false);
     });
   }
 }
@@ -637,9 +673,10 @@ function applyDatasetModeUi() {
 function fitToWindow(animate = true) {
   if (!state.manifest) return;
   if (!state.isInteractive && animate) return;
-  
-  const vw = dom.viewport.clientWidth;
-  const vh = dom.viewport.clientHeight;
+
+  const viewportRect = dom.viewport.getBoundingClientRect();
+  const vw = Math.max(1, viewportRect.width);
+  const vh = Math.max(1, viewportRect.height);
   const iw = state.manifest.image.width;
   const ih = state.manifest.image.height;
   const pad = state.fitPadding;
@@ -647,7 +684,8 @@ function fitToWindow(animate = true) {
   const availableH = Math.max(0, vh - pad * 2);
 
   const fitScale = Math.min(availableW / iw, availableH / ih);
-  state.targetScale = Math.max(state.minScale, Math.min(fitScale, state.maxScale));
+  const effectiveMinScale = Math.min(state.minScale, fitScale);
+  state.targetScale = Math.max(effectiveMinScale, Math.min(fitScale, state.maxScale));
 
   const fittedW = iw * state.targetScale;
   const fittedH = ih * state.targetScale;
@@ -825,7 +863,7 @@ function handleKeydown(event) {
 
 function handleResize() {
   if (!state.manifest) return;
-  fitToWindow(false);
+  requestAnimationFrame(() => fitToWindow(false));
 }
 
 // ============================================================================
