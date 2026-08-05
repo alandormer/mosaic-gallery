@@ -2,7 +2,7 @@
   "version": 1,
   "mode": "published",
   "title": "Mosaic Gallery",
-  "generated_at": "2026-08-05T19:48:38+00:00",
+  "generated_at": "2026-08-05T19:55:54+00:00",
   "items": [
     {
       "slug": "lighthouse",
@@ -218,6 +218,23 @@
       "date": null,
       "width": 6500,
       "height": 6500,
+      "columns": 0,
+      "rows": 0,
+      "tile_count": 0,
+      "source_count": 0,
+      "collections": [],
+      "mode": "published"
+    },
+    {
+      "slug": "dji-20240816190208-0221-d-mosaic",
+      "title": "DJI_20240816190208_0221_D-mosaic",
+      "viewer_url": "dji-20240816190208-0221-d-mosaic/index.html?gallery=../index.html",
+      "thumbnail_url": "dji-20240816190208-0221-d-mosaic/thumbnail.jpg",
+      "image_url": "dji-20240816190208-0221-d-mosaic/mosaic.jpg",
+      "target_url": "dji-20240816190208-0221-d-mosaic/target.jpg",
+      "date": null,
+      "width": 6500,
+      "height": 4891,
       "columns": 0,
       "rows": 0,
       "tile_count": 0,
