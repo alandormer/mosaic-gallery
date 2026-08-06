@@ -2,7 +2,7 @@
   "version": 1,
   "mode": "published",
   "title": "Mosaic Gallery",
-  "generated_at": "2026-08-06T19:24:33+00:00",
+  "generated_at": "2026-08-06T19:52:51+00:00",
   "items": [
     {
       "slug": "lighthouse",
@@ -234,7 +234,7 @@
       "target_url": "dji-20260806110829-0708-d-mosaic/target.jpg",
       "date": null,
       "width": 6500,
-      "height": 4875,
+      "height": 4835,
       "columns": 0,
       "rows": 0,
       "tile_count": 0,
