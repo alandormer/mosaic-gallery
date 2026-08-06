@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "title": "DJI_20240413122753_0026_D-mosaic",
+  "dataset_mode": "mosaic-only",
+  "image": {
+    "file": "mosaic.jpg",
+    "width": 6500,
+    "height": 4875
+  },
+  "collections": [],
+  "sources": [],
+  "tiles": [],
+  "grid": {},
+  "thumbnail": {
+    "file": "thumbnail.jpg"
+  },
+  "target": {
+    "file": "target.jpg"
+  }
+}
